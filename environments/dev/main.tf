@@ -1,29 +1,32 @@
-module "iam" {
-  source           = "../../modules/iam"
+# module "iam" {
+#   source           = "../../modules/iam"
+#   environment_name = terraform.workspace
+# }
+module "secret-manager" {
+  source           = "../../modules/secret-manager"
   environment_name = terraform.workspace
 }
+# module "cognito" {
+#   source           = "../../modules/cognito"
+#   environment_name = terraform.workspace
+# }
 
-module "cognito" {
-  source           = "../../modules/cognito"
-  environment_name = terraform.workspace
-}
-
-module "rds" {
-  source           = "../../modules/rds"
-  environment_name = terraform.workspace
-}
-module "vpc" {
-  source           = "../../modules/vpc"
-  environment_name = terraform.workspace
-}
-module "s3" {
-  source           = "../../modules/s3"
-  environment_name = terraform.workspace
-}
-module "ec2" {
-  source           = "../../modules/ec2"
-  environment_name = terraform.workspace
-}
+# module "rds" {
+#   source           = "../../modules/rds"
+#   environment_name = terraform.workspace
+# }
+# module "vpc" {
+#   source           = "../../modules/vpc"
+#   environment_name = terraform.workspace
+# }
+# module "s3" {
+#   source           = "../../modules/s3"
+#   environment_name = terraform.workspace
+# }
+# module "ec2" {
+#   source           = "../../modules/ec2"
+#   environment_name = terraform.workspace
+# }
 # module "cloudfront" {
 #   source           = "../../modules/cloudfront"
 #   environment_name = terraform.workspace
@@ -39,13 +42,4 @@ module "ec2" {
 #   environment_name   = terraform.workspace
 #   vpc_id             = module.vpc.vpc_id
 #   internet_gatewa_id = module.internet_gateway.ig_id
-# }
-
-
-# terraform {
-#   backend "s3" {
-#     bucket = "dev-shared-data"
-#     key    = "terraform.tfstate"
-#     region = "us-east-1"
-#   }
 # }
