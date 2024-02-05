@@ -1,7 +1,7 @@
-# module "iam" {
-#   source           = "../../modules/iam"
-#   environment_name = terraform.workspace
-# }
+module "iam" {
+  source           = "../../modules/iam"
+  environment_name = terraform.workspace
+}
 # module "secret-manager" {
 #   source           = "../../modules/secret-manager"
 #   environment_name = terraform.workspace
@@ -26,19 +26,19 @@ module "route-53" {
   vpc_id           = module.vpc.vpc_id
   domain_name      = "www.robosoftin.com"
 }
-# module "s3" {
-#   source           = "../../modules/s3"
-#   environment_name = terraform.workspace
-# }
-# module "ec2" {
-#   source           = "../../modules/ec2"
-#   environment_name = terraform.workspace
-# }
-# module "cloudfront" {
-#   source           = "../../modules/cloudfront"
-#   environment_name = terraform.workspace
-#   s3_bucket_name   = module.s3.s3_bucket_name
-# }
+module "s3" {
+  source           = "../../modules/s3"
+  environment_name = terraform.workspace
+}
+module "ec2" {
+  source           = "../../modules/ec2"
+  environment_name = terraform.workspace
+}
+module "cloudfront" {
+  source           = "../../modules/cloudfront"
+  environment_name = terraform.workspace
+  s3_bucket_domain = module.s3.s3_bucket_domain
+}
 module "internet_gateway" {
   source           = "../../modules/internet-gateway"
   environment_name = terraform.workspace

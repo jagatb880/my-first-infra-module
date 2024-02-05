@@ -1,10 +1,9 @@
-variable "s3_bucket_name" {
-  description = "Bucket name from the S3 module"
+provider "aws" {
+  region = "us-east-1"
 }
-
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = var.s3_bucket_name
+    domain_name = var.s3_bucket_domain
     origin_id   = "S3Origin"
   }
 
@@ -16,7 +15,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   logging_config {
     include_cookies = false
-    bucket          = "mylogs.s3.amazonaws.com"
+    bucket          = "demo-mylogs.s3.amazonaws.com"
     prefix          = "myprefix"
   }
 
@@ -52,5 +51,26 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cloudfront_4xx_error_alarm" {
+  alarm_name          = "cloudfront-4xx-error-alarm-${aws_cloudfront_distribution.s3_distribution.id}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "4xxErrorRate"
+  namespace           = "AWS/CloudFront"
+  period              = "300" # 5 minutes
+  statistic           = "Average"
+  threshold           = "1" # Adjust threshold as needed
+
+  dimensions = {
+    DistributionId = aws_cloudfront_distribution.s3_distribution.id
+  }
+
+  alarm_description = "Alarm if 4xx error rate is greater than 1% for 2 consecutive periods."
+
+  alarm_actions = ["arn:aws:sns:us-east-1:708287751177:my-first-infra-sns.fifo"]
+
+  ok_actions = ["arn:aws:sns:us-east-1:708287751177:my-first-infra-sns.fifo"]
 }
 
