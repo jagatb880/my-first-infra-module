@@ -1,6 +1,9 @@
-variable "vpc_id" {
-  description = "VPC ID from the VPC module"
+provider "aws" {
+  region = "us-east-1"
 }
+# variable "vpc_id" {
+#   description = "VPC ID from the VPC module"
+# }
 resource "aws_internet_gateway" "ig_custom" {
   vpc_id = var.vpc_id
 

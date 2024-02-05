@@ -56,28 +56,32 @@ output "vpc_id" {
   value = aws_vpc.customer_vpc.id
 }
 
-resource "aws_internet_gateway" "ig_custom" {
-  vpc_id = aws_vpc.customer_vpc.id
-
-  tags = {
-    "Name" = "${var.environment_name}_ig_custom"
-  }
+output "subnet_id" {
+  value = aws_subnet.public_subnet.id
 }
 
-resource "aws_route_table" "example" {
-  vpc_id = aws_vpc.customer_vpc.id
+# resource "aws_internet_gateway" "ig_custom" {
+#   vpc_id = aws_vpc.customer_vpc.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.ig_custom.id
-  }
+#   tags = {
+#     "Name" = "${var.environment_name}_ig_custom"
+#   }
+# }
 
-  tags = {
-    Name = "${var.environment_name}_example"
-  }
-}
+# resource "aws_route_table" "example" {
+#   vpc_id = aws_vpc.customer_vpc.id
 
-resource "aws_route_table_association" "rt_custom_internet_association" {
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.example.id
-}
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     gateway_id = var.internet_gatewa_id
+#   }
+
+#   tags = {
+#     Name = "${var.environment_name}_example"
+#   }
+# }
+
+# resource "aws_route_table_association" "rt_custom_internet_association" {
+#   subnet_id      = aws_subnet.public_subnet.id
+#   route_table_id = aws_route_table.example.id
+# }

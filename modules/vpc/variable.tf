@@ -11,3 +11,8 @@ variable "environment_name" {
   type    = string
   default = "default"
 }
+
+variable "internet_gatewa_id" {
+  type    = string
+  default = "default"
+}

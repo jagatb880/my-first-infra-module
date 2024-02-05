@@ -1,14 +1,15 @@
 //to do connection between subnet and route-table
-# module "vpc" {
-#   source           = "../vpc"
-#   environment_name = var.environment_name
+provider "aws" {
+  region = "us-east-1"
+}
+# variable "vpc_id" {
+#   description = "VPC ID from the VPC module"
 # }
 
-# module "route_table" {
-#   source           = "../route-table"
-#   environment_name = var.environment_name
+# variable "route_table" {
+#   description = "IG ID from the Internet Gatway module"
 # }
-# resource "aws_route_table_association" "rt_custom_internet_association" {
-#   subnet_id      = module.vpc.id
-#   route_table_id = module.route_table.id
-# }
+resource "aws_route_table_association" "rt_custom_internet_association" {
+  subnet_id      = var.subnet_id
+  route_table_id = var.route_table
+}
