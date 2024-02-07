@@ -1,4 +1,6 @@
-# modules/s3/main.tf
+provider "aws" {
+  region = "us-east-1"
+}
 
 resource "aws_s3_bucket" "app_data" {
   bucket = "${var.environment_name}-jag-app-data"

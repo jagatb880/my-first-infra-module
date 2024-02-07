@@ -1,22 +1,3 @@
-# resource "aws_iam_role" "web_server" {
-#   name = "web_server_role_${var.environment_name}"
-
-#   assume_role_policy = <<EOF
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Action": "sts:AssumeRole",
-#       "Principal": {
-#         "Service": "ec2.amazonaws.com"
-#       },
-#       "Effect": "Allow",
-#       "Sid": ""
-#     }
-#   ]
-# }
-# EOF
-# }
 provider "aws" {
   region = "us-east-1"
 }
@@ -79,29 +60,6 @@ resource "aws_iam_policy" "web_server_policy" {
         ]
       }
     ]
-    # Statement = [
-    #   {
-    #     Action   = ["ec2:Describe*", "iam:List*", "rds:Describe*", "s3:ListAllMyBuckets", "cognito-identity:List*", "cloudfront:Get*"]
-    #     Effect   = "Allow"
-    #     Resource = "*"
-    #   },
-    #   {
-    #     "Effect" : "Allow",
-    #     "Action" : [
-    #       "s3:GetBucketAcl",
-    #       "s3:PutBucketAcl"
-    #     ],
-    #     "Resource" : "arn:aws:s3:::demo-mylogs"
-    #   },
-    #   {
-    #     "Effect" : "Allow",
-    #     "Action" : [
-    #       "s3:GetObject",
-    #       "s3:PutObject"
-    #     ],
-    #     "Resource" : "arn:aws:s3:::demo-mylogs/*"
-    #   }
-    # ]
   })
 }
 
@@ -109,3 +67,52 @@ resource "aws_iam_user_policy_attachment" "test-attach" {
   user       = aws_iam_user.web_server.name
   policy_arn = aws_iam_policy.web_server_policy.arn
 }
+
+data "aws_iam_policy_document" "waf_policy" {
+  statement {
+    actions = [
+      "wafv2:GetWebACL",
+      "wafv2:GetWebACLForResource",
+      "wafv2:AssociateWebACL",
+      "wafv2:DisassociateWebACL",
+      "wafv2:PutLoggingConfiguration",
+      "wafv2:UpdateWebACL",
+    ]
+
+    resources = [
+      var.waf_acl_arn,
+      var.api_gateway_arn,
+    ]
+  }
+}
+
+resource "aws_iam_policy" "waf_policy" {
+  name        = "WAFPolicy"
+  description = "IAM policy for WAF management"
+  policy      = data.aws_iam_policy_document.waf_policy.json
+}
+
+resource "aws_iam_role" "waf_role" {
+  name               = "WAFRole"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "apigateway.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "waf_policy_attachment" {
+  role       = aws_iam_role.waf_role.name
+  policy_arn = aws_iam_policy.waf_policy.arn
+}
+
+
